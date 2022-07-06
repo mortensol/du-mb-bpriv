@@ -60,7 +60,7 @@ module type Ind1CCA_Oracles = {
 
 (* IND-1-CCA adversary *)
 module type Ind1CCA_Adv(IO : Ind1CCA_Oracles) = {
-  proc main (pk : pkey) : bool {IO.enc IO.dec IO.o} 
+  proc main (pk : pkey) : bool {IO.enc, IO.dec, IO.o} 
 }.
 
 (* Global state shared between IND-1-CCA oracles and game *)
@@ -132,7 +132,7 @@ proof.
   by wp; call H_enc_ll; wp; call H_b_ll; auto.
 qed.
 
-lemma Ind1CCA_Oracles_dec_ll (O <: POracle{BS}) (S <: Scheme{BS}) (LR <: LorR):
+lemma Ind1CCA_Oracles_dec_ll (O <: POracle { -BS }) (S <: Scheme { -BS }) (LR <: LorR):
   islossless S(O).dec =>
   islossless Ind1CCA_Oracles(S,O,LR).dec.
 proof.
@@ -289,16 +289,16 @@ module WrapAdv(A: Ind1CCA_Adv, S : Scheme, O : Oracle, IO : Ind1CCA_Oracles) = {
 
 (* ---------------------------------------------------------------------- *)
 section HybridProof.
-  declare module O <: Oracle {Count, BS, HybOrcl,WrapAdv}.
-  declare module S <: Scheme {Count, BS, HybOrcl, O,WrapAdv}.
-  declare module A <: Ind1CCA_Adv {Count, BS, HybOrcl, S, O, WrapAdv}.
+  declare module O <: Oracle { -Count, -BS, -HybOrcl, -WrapAdv }.
+  declare module S <: Scheme { -Count, -BS, -HybOrcl, -WrapAdv, -O }.
+  declare module A <: Ind1CCA_Adv { -Count, -BS, -HybOrcl, -WrapAdv, -S, -O }.
 
   declare axiom O_init_ll: islossless O.init.
   declare axiom O_o_ll   : islossless O.o.
   declare axiom S_kgen_ll: islossless O.o => islossless S(O).kgen.
   declare axiom S_enc_ll : islossless O.o => islossless S(O).enc.
   declare axiom S_dec_ll : islossless O.o => islossless S(O).dec.
-  declare axiom A_main_ll (IO <: Ind1CCA_Oracles{A}):
+  declare axiom A_main_ll (IO <: Ind1CCA_Oracles { -A }):
     islossless IO.enc => 
     islossless IO.dec => 
     islossless IO.o => 
@@ -420,7 +420,7 @@ section HybridProof.
 
   (* BS: For the constraints here on C, it would be nice to define and enforce
          non-memory modules. *)
-  local lemma hyb_aux1 (C <: LorR{BS,O,S,A,Count}) &m:
+  local lemma hyb_aux1 (C <: LorR { -BS, -O, -S, -A, -Count }) &m:
       Pr[Orcln(HA(OrclbImpl), LeftRight(C,OrclbImpl)).main() @ &m : res /\ Count.c <= n]
     = Pr[Ind1CCA(S,A,O,C).main()  @ &m: res /\ size BS.encL <= n].
   proof.
@@ -477,10 +477,10 @@ section HybridProof.
 search (`| _ |)%Real.
     rewrite -(hyb2 &m) -(hyb3 &m) (hyb1 &m) StdOrder.RealOrder.normrM.
     have H :  (0%r <= (1%r / n%r)) by smt.
-    smt.
+    by rewrite {1}/("`|_|")%Real H.
   qed.
 
-  local lemma hyb_aux2 (C <: LorR{BS,O,S,A,Count,WrapAdv,HybOrcl}) &m:
+  local lemma hyb_aux2 (C <: LorR { -BS, -O, -S, -A, -Count, -WrapAdv, -HybOrcl }) &m:
       Pr[Orcln(HybGame(HA,OrclbImpl),LeftRight(C,OrclbImpl)).main() @ &m : (res /\ HybOrcl.l <= n) /\ Count.c <= 1]
     = Pr[Ind1CCA(S,WrapAdv(A,S,O),O,C).main()  @ &m: res /\ WrapAdv.l <= n /\ size BS.encL <= 1].
   proof.

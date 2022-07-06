@@ -253,16 +253,16 @@ module SConsis3_R(V:VotingSystem, Ex:Extractor, C:ValidIndS,
 
 section StrongConsistency.
 
-declare module H  <: HOracle.Oracle { BP }. 
-declare module G  <: GOracle.Oracle { BP, H, HRO.ERO }. 
-declare module Ev <: PKEvo.Scheme { BP, H, G, HRO.ERO }.  
-declare module C  <: ValidIndS { BP, H, G, Ev, HRO.ERO }. 
-declare module P  <: Prover { BP, H, G, Ev, C }. 
-declare module Ve <: Verifier { BP, H, G, Ev, C, P }.
-declare module CP <: CommitmentProtocol { BP, H, G, Ev, C, P, Ve, HRO.ERO }.
+declare module H  <: HOracle.Oracle { -BP }. 
+declare module G  <: GOracle.Oracle { -BP, -H, -HRO.ERO }. 
+declare module Ev <: PKEvo.Scheme { -BP, -H, -G, -HRO.ERO }.  
+declare module C  <: ValidIndS { -BP, -H, -G, -Ev, -HRO.ERO }. 
+declare module P  <: Prover { -BP, -H, -G, -Ev, -C }. 
+declare module Ve <: Verifier { -BP, -H, -G, -Ev, -C, -P }.
+declare module CP <: CommitmentProtocol { -BP, -H, -G, -Ev, -C, -P, -Ve, -HRO.ERO }.
 
-declare module Asc2 <: SConsis2_adv { BP, H, G, Ev, C, P, Ve, CP, HRO.ERO }. 
-declare module Asc3 <: SConsis3_adv { BP, H, G, Ev, C, P, Ve, CP }.  
+declare module Asc2 <: SConsis2_adv { -BP, -H, -G, -Ev, -C, -P, -Ve, -CP, -HRO.ERO }. 
+declare module Asc3 <: SConsis3_adv { -BP, -H, -G, -Ev, -C, -P, -Ve, -CP }.  
 
 (* validInd operator *)
 op validInd : epkey -> ((ident * upkey * commitment) * cipher) -> (h_in, h_out) fmap -> bool.
@@ -310,15 +310,15 @@ declare axiom Ev_kgen_ll' : islossless Ev(HRO.ERO).kgen.
 declare axiom CP_gen_ll : islossless CP.gen. 
 
 (* proof system *)
-declare axiom PS_p_ll (G <: GOracle.POracle) : 
+declare axiom PS_p_ll (G <: GOracle.POracle { -P }) : 
     islossless G.o => islossless P(G).prove.  
 
 (* SConis2 adversary *)
-declare axiom Asc2_ll (O <: SCons_Oracle {Asc2}) : 
+declare axiom Asc2_ll (O <: SCons_Oracle { -Asc2 }) : 
   islossless H.o => islossless G.o => islossless Asc2(O).main. 
 
 (* SConsis3 adversary *)
-declare axiom Asc3_ll (O <: SCons_Oracle {Asc3}) : 
+declare axiom Asc3_ll (O <: SCons_Oracle { -Asc3 }) : 
   islossless H.o => islossless G.o => islossless Asc3(O).main. 
 
 (* Concrete extractor taking a ballot (pc, c) and secret data BP.sk *)

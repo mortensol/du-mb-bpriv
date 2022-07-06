@@ -100,7 +100,7 @@ clone export MiniVotingSecurity_mb as MV2 with
 
 
 (* Labelled Public-Key Encryption Scheme  *)
-  module (IPKE(P: PSpke.Prover, Ve: PSpke.Verifier): Scheme) (O:HOracle.POracle) = {
+module (IPKE(P: PSpke.Prover, Ve: PSpke.Verifier): Scheme) (O:HOracle.POracle) = {
     
     proc kgen(): pkey * skey ={
       var sk; 
@@ -154,18 +154,18 @@ module (Belenios (Pe: PSpke.Prover, Ve: PSpke.Verifier, Vc: PSpke.Verifier,
 
 section DU_MB_BPRIV. 
 
-declare module Pe <: PSpke.Prover    {BP, HRO.ERO, BPS, BS, PKEvf.H.Count, PKEvf.H.HybOrcl, WrapAdv}.
-declare module Ve <: PSpke.Verifier  {BP, HRO.ERO, BPS, BS, PKEvf.H.Count, PKEvf.H.HybOrcl, WrapAdv, Pe}.
-declare module Vc <: PSpke.Verifier  {BP, HRO.ERO, BPS, BS, Pe, Ve}.
+declare module Pe <: PSpke.Prover    { -BP, -HRO.ERO, -BPS, -BS, -PKEvf.H.Count, -PKEvf.H.HybOrcl, -WrapAdv }.
+declare module Ve <: PSpke.Verifier  { -BP, -HRO.ERO, -BPS, -BS, -PKEvf.H.Count, -PKEvf.H.HybOrcl, -WrapAdv, -Pe }.
+declare module Vc <: PSpke.Verifier  { -BP, -HRO.ERO, -BPS, -BS, -Pe, -Ve }.
 
-declare module G  <: GOracle.Oracle  {BP, HRO.ERO, BPS, BS, Pe, Ve, Vc}.   
-declare module S  <: Simulator       {BP, HRO.ERO, BPS, BS, PKEvf.H.Count, PKEvf.H.HybOrcl, WrapAdv, 
-                                     Pe, Ve, Vc, G}. 
-declare module Vz <: Verifier        {BP, HRO.ERO, BPS, BS, Pe, Ve, Vc, G, S}. 
-declare module Pz <: Prover          {BP, HRO.ERO, BPS, BS, Pe, Ve, Vc, G, S, Vz}. 
-declare module R  <: VotingRelation' {BP, HRO.ERO, BPS, BS, Pe, Ve, Vc, G, S, Vz, Pz}. 
+declare module G  <: GOracle.Oracle  { -BP, -HRO.ERO, -BPS, -BS, -Pe, -Ve, -Vc }.   
+declare module S  <: Simulator       { -BP, -HRO.ERO, -BPS, -BS, -PKEvf.H.Count, -PKEvf.H.HybOrcl, -WrapAdv, 
+                                       -Pe, -Ve, -Vc, -G }. 
+declare module Vz <: Verifier        { -BP, -HRO.ERO, -BPS, -BS, -Pe, -Ve, -Vc, -G, -S }.
+declare module Pz <: Prover          { -BP, -HRO.ERO, -BPS, -BS, -Pe, -Ve, -Vc, -G, -S, -Vz }.
+declare module R  <: VotingRelation' { -BP, -HRO.ERO, -BPS, -BS, -Pe, -Ve, -Vc, -G, -S, -Vz, -Pz }.
  
-declare module A  <: DU_MB_BPRIV_adv    {BP, HRO.ERO, BPS, BS, Pe, Ve, Vc, G, S, Vz, Pz, R}. 
+declare module A  <: DU_MB_BPRIV_adv { -BP, -HRO.ERO, -BPS, -BS, -Pe, -Ve, -Vc, -G, -S, -Vz, -Pz, -R }. 
 
 (**** Lossless assumptions ****)
 
@@ -174,42 +174,42 @@ declare axiom Gi_ll : islossless G.init.
 declare axiom Go_ll : islossless G.o. 
 
 (** DU_MB-BPRIV adversary **)
-declare axiom A_a1_ll (O <: DU_MB_BPRIV_oracles { A }):
+declare axiom A_a1_ll (O <: DU_MB_BPRIV_oracles { -A }):
   islossless O.vote => 
   islossless O.board => 
   islossless O.h => 
   islossless O.g => 
   islossless A(O).create_bb. 
 
-declare axiom A_a2_ll (O <: DU_MB_BPRIV_oracles { A }): 
+declare axiom A_a2_ll (O <: DU_MB_BPRIV_oracles { -A }): 
   islossless O.board => 
   islossless O.h => 
   islossless O.g => 
   islossless A(O).get_tally.
  
-declare axiom A_a3_ll (O <: DU_MB_BPRIV_oracles { A }): 
+declare axiom A_a3_ll (O <: DU_MB_BPRIV_oracles { -A }): 
   islossless O.verify => 
   islossless O.h => 
   islossless O.g => 
   islossless A(O).final_guess. 
 
-declare axiom A_a4_ll (O <: DU_MB_BPRIV_oracles { A }): 
+declare axiom A_a4_ll (O <: DU_MB_BPRIV_oracles { -A }): 
   islossless O.h => 
   islossless O.g => 
   islossless A(O).initial_guess. 
 
 (** Main Proof system **)
-declare axiom PS_p_ll (G <: GOracle.POracle {Pz} ) : 
+declare axiom PS_p_ll (G <: GOracle.POracle { -Pz } ) : 
   islossless G.o => islossless Pz(G).prove. 
-declare axiom PS_v_ll (G <: GOracle.POracle {Vz} ) : 
+declare axiom PS_v_ll (G <: GOracle.POracle { -Vz } ) : 
   islossless G.o => islossless Vz(G).verify. 
 
 (** Enc Proof system **)
-declare axiom PE_p_ll (H <: HOracle.POracle) : 
+declare axiom PE_p_ll (H <: HOracle.POracle { -Pe }) : 
   islossless H.o => islossless Pe(H).prove. 
-declare axiom PE_v_ll (H <: HOracle.POracle) : 
+declare axiom PE_v_ll (H <: HOracle.POracle { -Ve }) : 
   islossless H.o => islossless Ve(H).verify.
-declare axiom PE_c_ll (H <: HOracle.POracle) : 
+declare axiom PE_c_ll (H <: HOracle.POracle { -Vc }) : 
   islossless H.o => islossless Vc(H).verify.
 
 (** ZK simulator **)
@@ -268,7 +268,7 @@ declare axiom PS_p_verify_both (s: h_stm) (w: h_wit):
    /\ verify s res{1} HRO.ERO.m{1}].
 
 (** Encryption **)
-local lemma E_kg_ll  (H <: HOracle.POracle {IPKE(Pe, Ve)}) : 
+local lemma E_kg_ll  (H <: HOracle.POracle { -IPKE(Pe, Ve) }) : 
   islossless H.o => islossless IPKE(Pe,Ve,H).kgen.
 proof.
   move => Ho_ll. 
@@ -276,7 +276,7 @@ proof.
   by auto=>/>; rewrite FDistr.dt_ll.
 qed.
 
-local lemma E_enc_ll (H <: HOracle.POracle {IPKE(Pe, Ve)}) : 
+local lemma E_enc_ll (H <: HOracle.POracle { -IPKE(Pe, Ve) }) : 
   islossless H.o => islossless IPKE(Pe,Ve, H).enc. 
 proof.
   move => Ho_ll.
@@ -285,7 +285,7 @@ proof.
   by auto=>/>; rewrite FDistr.dt_ll.
 qed.
 
-local lemma E_dec_ll (H <: HOracle.POracle {IPKE(Pe, Ve)}) : 
+local lemma E_dec_ll (H <: HOracle.POracle { -IPKE(Pe, Ve) }) : 
   islossless H.o => islossless IPKE(Pe,Ve,H).dec. 
 proof.
   move => Ho_ll; proc.
@@ -295,7 +295,7 @@ qed.
  
 
 (** ValidInd operator **)
-local lemma C_vi_ll (H <: HOracle.POracle {CV(Vc)}) : 
+local lemma C_vi_ll (H <: HOracle.POracle { -CV(Vc) }) : 
   islossless H.o => islossless CV(Vc,H).validInd. 
 proof.
   move => Ho_ll; proc. 
@@ -309,13 +309,13 @@ local lemma Rho_weight (x: (ident * ptxt option) list):
   by rewrite /Rho dunit_ll.
 
 (*** linking key generation and extractPk operator ***)
-local lemma E_kgen_extractpk (H <: HOracle.POracle {IPKE(Pe, Ve)}):
+local lemma E_kgen_extractpk (H <: HOracle.POracle { -IPKE(Pe, Ve) }):
  equiv [IPKE(Pe,Ve,H).kgen ~ IPKE(Pe,Ve,H).kgen : ={glob H, glob IPKE(Pe,Ve)} 
         ==> ={glob H, glob  IPKE(Pe,Ve), res} /\ res{1}.`1 = getPK res{1}.`2] 
   by proc; auto.
 
 (*  stating that the keys are generated *)
-local lemma Ekgen_extractPk (H<: HOracle.POracle {IPKE(Pe, Ve)}):
+local lemma Ekgen_extractPk (H<: HOracle.POracle { -IPKE(Pe, Ve) }):
   equiv [IPKE(Pe,Ve, H).kgen ~ IPKE(Pe,Ve,H).kgen:  
     ={glob H, glob IPKE(Pe,Ve)}
     ==>
@@ -324,7 +324,7 @@ local lemma Ekgen_extractPk (H<: HOracle.POracle {IPKE(Pe, Ve)}):
       /\  res{1}.`1 = getPK res{1}.`2 ]
   by proc; auto.
 
-local lemma Ekgen_extractPk2  (H <: HOracle.POracle{IPKE(Pe, Ve)}):
+local lemma Ekgen_extractPk2  (H <: HOracle.POracle { -IPKE(Pe, Ve) }):
     hoare[ IPKE(Pe, Ve, H).kgen : true ==> res.`1 = getPK res.`2]
   by proc; auto. 
 

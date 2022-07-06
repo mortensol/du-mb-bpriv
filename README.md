@@ -14,4 +14,5 @@ In addition, we model the [*mb-bpriv* ballot privacy definition](https://eprint.
   *  The [`mb_bpriv_orignal_def`](https://github.com/mortensol/du-mb-bpriv/tree/main/mb_bpriv_original_def) folder contains an EasyCrypt model of the mb-bpriv ballot privacy definition and proofs that Labelled-MiniVoting and Belenios satisfy this definition
 
 #### Installing EasyCrypt
-We refer to https://github.com/EasyCrypt/easycrypt for instructions on how to install EasyCrypt. 
+We refer to https://github.com/EasyCrypt/easycrypt for instructions on how to install EasyCrypt.
+This proof is known to check with EasyCrypt stable release `r2022.04`, using Z3 4.8.10, Alt-Ergo 2.4.1, and CVC4 1.8.

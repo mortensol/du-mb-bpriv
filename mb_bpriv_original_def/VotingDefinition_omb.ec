@@ -60,14 +60,14 @@ module type  VotingSystem(H:HOracle.POracle, G:GOracle.POracle) = {
   proc validboard(bb:(pubcred * ballot) list, pk:pkey) : bool { H.o }
 
   (* Tally algorithm *)
-  proc tally(bb:(pubcred * ballot) list, pk:pkey, sk:skey) : result * prf { H.o G.o }
+  proc tally(bb:(pubcred * ballot) list, pk:pkey, sk:skey) : result * prf { H.o, G.o }
 
   (* Verify vote algorithm that can capture checking encrypted ballots or plaintext results *)
   proc verifyvote(id:ident, 
                   s :state,
                   bb:(pubcred * ballot) list,
                   pc:pubcred,
-                  sc:secretcred) : bool { H.o G.o }
+                  sc:secretcred) : bool { H.o, G.o }
 
   (* Verify that the tally is correct *)
   proc verifytally(st : (pkey * pubBB * result), pi:prf) : bool { G.o }

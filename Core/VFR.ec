@@ -63,7 +63,7 @@ clone export ProofSystem as PSvf with
 
 (* VFR adversary *)
 module type VFR_Adv(H: PKEvf.POracle, G: PSvf.POracle) ={
-  proc main(pk: pkey)  : ( label * cipher) list { H.o G.o} 
+  proc main(pk: pkey)  : ( label * cipher) list { H.o, G.o} 
 }.
 
 (*** Overwrite the Relation in Proof System to one of the following ***)

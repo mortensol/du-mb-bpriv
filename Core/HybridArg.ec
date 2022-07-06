@@ -139,8 +139,8 @@ clone import Means as M with
 (* -------------------------------------------------------------------- *)
 section.
 
-  declare module Ob <: Orclb    {Count,HybOrcl}.
-  declare module A  <: AdvOrclb {Count,HybOrcl,Ob}.
+  declare module Ob <: Orclb    { -Count, -HybOrcl }.
+  declare module A  <: AdvOrclb { -Count, -HybOrcl, -Ob}.
 
   (* Hybrid game where index is fixed, not sampled *)
   local module HybGameFixed (O : Orcl) = {
@@ -228,7 +228,7 @@ section.
   declare axiom losslessL: islossless Ob.leaks.
   declare axiom losslessOb1: islossless Ob.orclL.
   declare axiom losslessOb2: islossless Ob.orclR.
-  declare axiom losslessA (Ob0 <: Orclb{A}) (LR <: Orcl{A}):
+  declare axiom losslessA (Ob0 <: Orclb { -A }) (LR <: Orcl { -A }):
     islossless LR.orcl => 
     islossless Ob0.leaks => islossless Ob0.orclL => islossless Ob0.orclR =>
     islossless A(Ob0, LR).main.

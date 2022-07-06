@@ -173,17 +173,17 @@ module type DU_MB_BPRIV_adv(O:DU_MB_BPRIV_oracles) = {
                  cu:(ident, secretcred) fmap, 
                  pu:(ident, pubcred) fmap,
                  hc: ident fset ) 
-                 : (pubcred * ballot * saux) list { O.vote O.board O.h O.g }
+                 : (pubcred * ballot * saux) list { O.vote, O.board, O.h, O.g }
 
   (* adversary gets to see the tally and outputs a result and proof *)
-  proc get_tally(r:result, pi:prf) : result * prf { O.board O.h O.g } 
+  proc get_tally(r:result, pi:prf) : result * prf { O.board, O.h, O.g } 
 
   (* adversary gets to make an inital guess after seeing either bb0 or bb1 *)
-  proc initial_guess() : bool { O.h O.g }  
+  proc initial_guess() : bool { O.h, O.g }  
 
   (* adversary gets access to verify oracle and gets to make a guess based
      on what he sees, i.e. who are happy etc. *)
-  proc final_guess() : bool { O.verify O.h O.g }
+  proc final_guess() : bool { O.verify, O.h, O.g }
                                                                     
 }.
 

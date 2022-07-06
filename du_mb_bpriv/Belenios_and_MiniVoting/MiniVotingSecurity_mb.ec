@@ -21,19 +21,19 @@ clone FiniteEager as HRO.
 section DU_MB_BPRIV. 
 
 (** Random oracle **)
-declare module G  <: GOracle.Oracle { BP, HRO.ERO, BPS, BS }.
+declare module G  <: GOracle.Oracle { -BP, -HRO.ERO, -BPS, -BS }.
 (** Encryption scheme **)
-declare module E  <: Scheme { BP, HRO.ERO, G, BPS, BS, PKEvf.H.Count, PKEvf.H.HybOrcl, WrapAdv}.
+declare module E  <: Scheme { -BP, -HRO.ERO, -G, -BPS, -BS, -PKEvf.H.Count, -PKEvf.H.HybOrcl, -WrapAdv}.
 (** Proof system **)
-declare module S  <: Simulator { BP, HRO.ERO, G, E, BPS, BS, PKEvf.H.Count, PKEvf.H.HybOrcl, WrapAdv }.
-declare module Ve <: Verifier { BP, HRO.ERO, G, E, S, BPS, BS }.
-declare module P  <: Prover { BP, HRO.ERO, G, E, S, Ve, BPS, BS }.
-declare module R  <: VotingRelation' { BP, HRO.ERO, G, E, S, Ve, P, BPS, BS }.
+declare module S  <: Simulator { -BP, -HRO.ERO, -G, -E, -BPS, -BS, -PKEvf.H.Count, -PKEvf.H.HybOrcl, -WrapAdv }.
+declare module Ve <: Verifier { -BP, -HRO.ERO, -G, -E, -S, -BPS, -BS }.
+declare module P  <: Prover { -BP, -HRO.ERO, -G, -E, -S, -Ve, -BPS, -BS }.
+declare module R  <: VotingRelation' { -BP, -HRO.ERO, -G, -E, -S, -Ve, -P, -BPS, -BS }.
 (** Validity checker **)
-declare module C  <: ValidInd { BP, HRO.ERO, G, E, S, Ve, P, R, BPS, BS }.
+declare module C  <: ValidInd { -BP, -HRO.ERO, -G, -E, -S, -Ve, -P, -R, -BPS, -BS }.
 
 (** Adversary **)
-declare module A  <: DU_MB_BPRIV_adv { BP, HRO.ERO, G, E, S, Ve, P, R, C, BPS, BS}.
+declare module A  <: DU_MB_BPRIV_adv { -BP, -HRO.ERO, -G, -E, -S, -Ve, -P, -R, -C, -BPS, -BS }.
 
 (**** Lossless assumptions ****)
 
@@ -42,35 +42,35 @@ declare axiom Gi_ll : islossless G.init.
 declare axiom Go_ll : islossless G.o. 
 
 (** DU-MB-BPRIV adversary **)
-declare axiom A_a1_ll (O <: DU_MB_BPRIV_oracles { A }):
+declare axiom A_a1_ll (O <: DU_MB_BPRIV_oracles { -A }):
   islossless O.vote  => 
   islossless O.board => 
   islossless O.h     => 
   islossless O.g     => 
   islossless A(O).create_bb. 
-declare axiom A_a2_ll (O <: DU_MB_BPRIV_oracles { A }): 
+declare axiom A_a2_ll (O <: DU_MB_BPRIV_oracles { -A }): 
   islossless O.board => 
   islossless O.h     => 
   islossless O.g     => 
   islossless A(O).get_tally. 
-declare axiom A_a3_ll (O <: DU_MB_BPRIV_oracles { A }): 
+declare axiom A_a3_ll (O <: DU_MB_BPRIV_oracles { -A }): 
   islossless O.verify => 
   islossless O.h      => 
   islossless O.g      => 
   islossless A(O).final_guess. 
-declare axiom A_a4_ll (O <: DU_MB_BPRIV_oracles { A }): 
+declare axiom A_a4_ll (O <: DU_MB_BPRIV_oracles { -A }): 
   islossless O.h => 
   islossless O.g => 
   islossless A(O).initial_guess. 
 
 (** Proof system **)
-declare axiom PS_p_ll (G <: GOracle.POracle { P })  : islossless G.o => islossless P(G).prove. 
-declare axiom PS_v_ll (G <: GOracle.POracle { Ve }) : islossless G.o => islossless Ve(G).verify. 
+declare axiom PS_p_ll (G <: GOracle.POracle { -P })  : islossless G.o => islossless P(G).prove. 
+declare axiom PS_v_ll (G <: GOracle.POracle { -Ve }) : islossless G.o => islossless Ve(G).verify. 
 
 (** Encryption **)
-declare axiom E_kg_ll  (H <: HOracle.POracle { E }) : islossless H.o => islossless E(H).kgen. 
-declare axiom E_enc_ll (H <: HOracle.POracle { E }) : islossless H.o => islossless E(H).enc. 
-declare axiom E_dec_ll (H <: HOracle.POracle { E }) : islossless H.o => islossless E(H).dec. 
+declare axiom E_kg_ll  (H <: HOracle.POracle { -E }) : islossless H.o => islossless E(H).kgen. 
+declare axiom E_enc_ll (H <: HOracle.POracle { -E }) : islossless H.o => islossless E(H).enc. 
+declare axiom E_dec_ll (H <: HOracle.POracle { -E }) : islossless H.o => islossless E(H).dec. 
 
 (** Encryption with HRO.ERO **)
 lemma E_kg_ll'  : islossless E(HRO.ERO).kgen by apply (E_kg_ll HRO.ERO HRO.ERO_o_ll). 
@@ -86,7 +86,7 @@ declare axiom Sp_ll : islossless S.prove.
 declare axiom R_m_ll : islossless R(E,HRO.ERO).main. 
 
 (** ValidInd operator **)
-declare axiom C_vi_ll (H <: HOracle.POracle { C }) : islossless H.o => islossless C(H).validInd. 
+declare axiom C_vi_ll (H <: HOracle.POracle { -C }) : islossless H.o => islossless C(H).validInd. 
 
 
 (****************************************************************************************************)
@@ -102,10 +102,10 @@ declare axiom Rho_weight x:
   weight (Rho x) = 1%r. 
 
 (* axiom linking key generation and getPK operator *)
-declare axiom E_kgen_getPK_hr (H <: HOracle.POracle { E }):
+declare axiom E_kgen_getPK_hr (H <: HOracle.POracle { -E }):
   hoare [E(H).kgen: true ==> res.`1 = getPK res.`2].
 
-equiv E_kgen_getPK (H <: HOracle.POracle { E }):
+equiv E_kgen_getPK (H <: HOracle.POracle { -E }):
   E(H).kgen ~ E(H).kgen : ={glob H, glob E} 
         ==> ={glob H, glob E, res} /\ res{1}.`1 = getPK res{1}.`2.
 proof. by conseq (: _ ==> ={glob H, glob E, res}) (E_kgen_getPK_hr H); sim. qed.
@@ -208,8 +208,8 @@ op rem_fst4 (x : ('a * 'b * 'c * 'd)) = (x.`2, x.`3, x.`4).
 
 (************ Construct a ZK adversary from du-mb-bpriv adversary *************)
 module type VotingAdvZK (H:HOracle.Oracle, O:GOracle.POracle) = {
-  proc a1() : (pkey * pubBB * result) * (skey * (label * cipher) list) {H.init H.o O.o}
-  proc a2(pi : prf option) : bool {H.o O.o}
+  proc a1() : (pkey * pubBB * result) * (skey * (label * cipher) list) {H.init, H.o, O.o}
+  proc a2(pi : prf option) : bool {H.o, O.o}
 }.
  
 
@@ -554,7 +554,7 @@ local module G0L' (E:Scheme, P:Prover, Ve:Verifier, C:ValidInd,
 }.
 
 (*** Lemma proving that G0L' is perfectly equivalent to the original definition ***)
-local lemma DU_MB_BPRIV_L_G0L'_equiv &m (H <: HOracle.Oracle{E, BP, G, A, C, Ve, P}) : 
+local lemma DU_MB_BPRIV_L_G0L'_equiv &m (H <: HOracle.Oracle{ -E, -BP, -G, -A, -C, -Ve, -P}) : 
   Pr[DU_MB_BPRIV_L(MV(E, P, Ve, C), A, H, G).main() @ &m : res] =
   Pr[G0L'(E,P,Ve,C,A,H,G).main() @ &m : res].
 proof. 
@@ -781,7 +781,7 @@ local module G1L (E:Scheme, Ve:Verifier, C:ValidInd,
 
 (*** Losslessness for BZK, useful in the ZK part a bit further down  ***)
 
-local lemma BZK_a1_ll (H <: HOracle.Oracle {E, BP, A}) (G <: GOracle.POracle {A}) : 
+local lemma BZK_a1_ll (H <: HOracle.Oracle { -E, -BP, -A }) (G <: GOracle.POracle { -A }) : 
   islossless H.init =>  
   islossless H.o => 
   islossless G.o => 
@@ -803,9 +803,9 @@ auto; call Hi_ll.
 by auto=> />; smt(Rho_weight).
 qed.
 
-lemma BZK_a2_ll' (H <: HOracle.Oracle {C, A}) 
-                 (G <: GOracle.POracle {Ve, A})
-                 (P <: Prover {A}) :
+lemma BZK_a2_ll' (H <: HOracle.Oracle { -C, -A }) 
+                 (G <: GOracle.POracle { -Ve, -A })
+                 (P <: Prover { -A }) :
   islossless H.o => 
   islossless G.o => 
   islossless P(G).prove =>
@@ -831,7 +831,7 @@ seq  1: true=> //.
 by sp; if=> //; auto; smt(DBool.dbool_ll).
 qed.
 
-lemma BZK_a2_ll (H <: HOracle.Oracle {C, A}) (G <: GOracle.POracle {P, Ve, A}) : 
+lemma BZK_a2_ll (H <: HOracle.Oracle { -C, -A }) (G <: GOracle.POracle { -P, -Ve, -A }) : 
   islossless H.o =>
   islossless G.o => 
   islossless BZK(E,P,C,Ve,A,H,G).a2.
@@ -926,9 +926,9 @@ qed.
 (*************** Lemma bounding the probability that the relation does not hold in ZK_L by ***************)
 (***************     the probability of returning true in the VFR game.                    ***************)
 
-local lemma ZKL_rel &m (H <: HOracle.Oracle {A, BPS, BP, BS, Ve, E, C, R})
-                       (G <: GOracle.Oracle {A, BPS, BP, BS, Ve, E, H, R, C})
-                       (P <: Prover {E, C, Ve, A, R, BPS, BP, BS, H, G}) :
+local lemma ZKL_rel &m (H <: HOracle.Oracle { -A, -BPS, -BP, -BS, -Ve, -E, -C, -R })
+                       (G <: GOracle.Oracle { -A, -BPS, -BP, -BS, -Ve, -E, -H, -R, -C })
+                       (P <: Prover { -E, -C, -Ve, -A, -R, -BPS, -BP, -BS, -H, -G }) :
   islossless H.o =>
   islossless G.o =>
   islossless P(G).prove =>
@@ -1086,8 +1086,8 @@ qed.
 (********** Lemma bounding the probability that the relation does not hold ************)
 (********** in ZK_R by the probability of returning true in the VFR game.  ************)
 
-local lemma ZKR_rel &m (H <: HOracle.Oracle {A, BPS, BP, BS, Ve, E, C, R})
-                       (S <: Simulator {E, C, P, Ve, A, R, BPS, BP, BS, H}) :
+local lemma ZKR_rel &m (H <: HOracle.Oracle { -A, -BPS, -BP, -BS, -Ve, -E, -C, -R })
+                       (S <: Simulator { -E, -C, -P, -Ve, -A, -R, -BPS, -BP, -BS, -H }) :
      islossless H.o
   => islossless S.o
   => islossless S.prove
@@ -1567,7 +1567,7 @@ local module G0R' (E  : Scheme)
 
 (******** Lemma proving that the above game is equivalent to security definition *******)
 
-local lemma DU_MB_BPRIV_R_G0'_R_equiv &m (H <: HOracle.Oracle {E, BP, G, A, C, Ve, S, R, P}) : 
+local lemma DU_MB_BPRIV_R_G0'_R_equiv &m (H <: HOracle.Oracle { -E, -BP, -G, -A, -C, -Ve, -S, -R, -P }) : 
   Pr[DU_MB_BPRIV_R(MV(E, P, Ve, C), A, H, G, S, Recover').main() @ &m : res]
   = Pr[G0R'(E, P, Ve, C, A, H, G, S).main() @ &m : res].
 proof.
@@ -1786,8 +1786,8 @@ local module G1R (E  : Scheme)
       var p1, b1, s1pr, s1po;
 
       if ((id \in BP.setH)) {
-        (s0pr, s0po, b0, p0)  <- vote_core(id, v0, oget BP.secmap.[id]);
-        (s1pr, s1po, b1, p1)  <- vote_core(id, v1, oget BP.secmap.[id]);
+        (s0pr, s0po, b0, p0)  <@ vote_core(id, v0, oget BP.secmap.[id]);
+        (s1pr, s1po, b1, p1)  <@ vote_core(id, v1, oget BP.secmap.[id]);
 
         BP.vmap.[id] <- (b0, b1, b0, v0) ::  (odflt [] BP.vmap.[id]);
         BP.bb0 <- (id, id, b0) :: BP.bb0;
@@ -2221,8 +2221,8 @@ local module G2R (E  : Scheme)
       var p1, b1, s1pr, s1po;
 
       if ((id \in BP.setH)) {
-        (s0pr, s0po, b0, p0)  <- vote_core(id, v0, oget BP.secmap.[id]);
-        (s1pr, s1po, b1, p1)  <- vote_core(id, v1, oget BP.secmap.[id]);
+        (s0pr, s0po, b0, p0)  <@ vote_core(id, v0, oget BP.secmap.[id]);
+        (s1pr, s1po, b1, p1)  <@ vote_core(id, v1, oget BP.secmap.[id]);
 
         (* We now store b1, b1, v0 instead of b0, b1, v0, as we did in G1R *)
         BP.vmap.[id] <- (b1, b1, b1, v0) :: (odflt [] BP.vmap.[id]);
@@ -2547,7 +2547,7 @@ seq  3  2: (   ={glob A, glob S, glob C, glob E, glob HRO.ERO, glob P, glob Ve, 
              /\ size bb'{1} = i0{1}
              /\ size BP.bb0{1} = size BP.bb1{1}
              /\ (forall j, 
-                   j < size bb'{1} => 
+                   0 <= j < size bb'{1} => 
                    ! nth witness BP.bb{2} j \in rem_ids BP.bb1{1} =>
                          nth witness bb'{1} j = nth witness BP.bb{2} j) 
              /\ bb0{1} = rem_ids BP.bb0{1} 
@@ -2557,14 +2557,14 @@ seq  3  2: (   ={glob A, glob S, glob C, glob E, glob HRO.ERO, glob P, glob Ve, 
                    (nth witness (rem_ids BP.bb0{1}) j).`1 = 
                    (nth witness (rem_ids BP.bb1{1}) j).`1) 
              /\ (forall j, 
-                   j < size bb'{1} => 
+                   0 <= j < size bb'{1} => 
                       (nth witness bb'{1} j).`1 = (nth witness BP.bb{2} j).`1) 
              /\ (forall j, 
                    0 <= j < size bb'{1} => 
                       (nth witness BP.bb{2} j) \in rem_ids BP.bb1{1} =>
                            (nth witness bb'{1} j \in rem_ids BP.bb0{1}))  
              /\ (forall j, 
-                   0<= j < size bb'{1} => 
+                   0 <= j < size bb'{1} => 
                       (nth witness BP.bb{2} j)  \in rem_ids BP.bb1{2} =>
                           (nth witness bb'{1} j)
                            = nth witness (rem_ids BP.bb0{1}) 
@@ -2577,9 +2577,10 @@ seq  3  2: (   ={glob A, glob S, glob C, glob E, glob HRO.ERO, glob P, glob Ve, 
          split; 1:smt(size_cat).
          split; 1:smt(size_cat nth_cat).
          split.
-         + move=> j; rewrite size_cat nth_cat /=.
-           move=> /ltzS /lez_eqVlt [->>|^ /h3] />.
-           by rewrite h2 nth_index // pb0P.
+         + move=> j ge0_j; rewrite size_cat nth_cat /=.
+           move=> /ltzS /lez_eqVlt [->>|^ j_lt_bb'] />.
+           + by rewrite h2 nth_index // pb0P.
+           by move=> _; exact: h3.
          split.
          + move=> j ge0_j; rewrite size_cat nth_cat /=.
            move=> /ltzS /lez_eqVlt [->> _|/> j_lt_sizebb'] />.
@@ -2597,11 +2598,15 @@ seq  3  2: (   ={glob A, glob S, glob C, glob E, glob HRO.ERO, glob P, glob Ve, 
      move=> pb0_notin_bb1; split.
      + split; 1:smt(size_ge0).
        split; 1:smt(size_cat).
-       split; 1:smt(size_cat nth_cat).
        split.
-       + move=> j; rewrite size_cat nth_cat /=.
-         move=> /ltzS /lez_eqVlt [->>|^ /h3] />.
-         by rewrite -pb0P.
+       + move=> j ge0_j; rewrite size_cat nth_cat /=.
+         move=> /ltzS /lez_eqVlt [->>|^ j_lt_bb'] />.
+         by move=> _; exact: h1.
+       split.
+       + move=> j ge0_j; rewrite size_cat nth_cat /=.
+         move=> /ltzS /lez_eqVlt [->>|^ j_lt_sizebb'] />.
+         + by rewrite -pb0P.
+         by move=> _; exact: h3.
        split.
        + move=> j ge0_j; rewrite size_cat nth_cat /=.
          move=> /ltzS /lez_eqVlt [->>|/> j_lt_sizebb'] />.
@@ -2618,14 +2623,18 @@ seq  3  2: (   ={glob A, glob S, glob C, glob E, glob HRO.ERO, glob P, glob Ve, 
    move=> h _ h'; have {h h'} eq_size': size bb' = size BP.bb{2} by smt().
    move=> eq_rngF eq_fstF rem_idsF eq_dec_lkupF.
    rewrite eq_size' /=; split.
-   + move=> j; case: (j < size bb').
+   + move=> j; case: (0 <= j < size bb').
      + exact: eq_rngF.
-     move=> ^ /lezNgt /nth_default ->.
-     by rewrite eq_size'=> /lezNgt /nth_default ->.
-   move=> j; case: (j < size bb').
+     case: (0 <= j)=> /> => [_|].
+     + move=> ^ /lezNgt /nth_default ->.
+       by rewrite eq_size'=> /lezNgt /nth_default ->.
+     by move=> /ltzNge /(nth_neg<:label * cipher>) ^ -> ->.
+   move=> j; case: (0 <= j < size bb').
    + exact: eq_fstF.
-   move=> ^ /lezNgt /nth_default ->.
-   by rewrite eq_size'=> /lezNgt /nth_default ->.
+   case: (0 <= j)=> /> => [_|].
+   + move=> ^ /lezNgt /nth_default ->.
+     by rewrite eq_size'=> /lezNgt /nth_default ->.
+   by move=> /ltzNge /(nth_neg<:label * cipher>) ^ -> ->.
 (*** FIXME: THe following remains to clean up!!! **)
 (* We are ready to enter the while loop and prove dbb eq *)
 while (={j, glob HRO.ERO, glob E, dbb, BP.sk, BP.bb0, BP.bb1, BP.sk, dbb}  /\ size BP.bb'{1} = size BP.bb{2}
@@ -2746,7 +2755,7 @@ local module G3R (E:Scheme, P:Prover, Ve:Verifier, C:ValidInd,
       var p1, b1, s1pr, s1po;
 
       if ((id \in BP.setH)) {
-        (s1pr, s1po, b1, p1)  <- vote_core(id, v1, oget BP.secmap.[id]);
+        (s1pr, s1po, b1, p1)  <@ vote_core(id, v1, oget BP.secmap.[id]);
 
         (* ballot cast, ballot counted, vote *)
         BP.vmap.[id] <- (b1, b1, s1po, v0) :: (odflt [] BP.vmap.[id]);
@@ -3065,7 +3074,15 @@ while ( ={j, BP.bb, dbb, BP.vmap, glob HRO.ERO} /\ (0 <= j{2})
                 else None) (flip BP.bb{2}))). 
   wp;sp. 
   if{1} =>//=. 
-  + auto=>/>; progress. do 3! congr. smt(). do 4! congr. smt(). smt(). smt(). smt(). smt(). 
+  + auto=>/>; progress.
+    + do 3! congr.
+      + smt().
+      do 4! congr.
+      + smt().
+      by move: H; case: ((nth witness BP.bb j){2})=> /#.
+    + smt().
+    + smt().
+    smt().
   exists* (glob E){1}, BP.sk{1}, idl{1}, b{1};
     elim* => ge sk idl b. 
   call{1} (Edec_Odec ge sk idl b). 
@@ -3411,7 +3428,7 @@ have ? : `|Pr[DU_MB_BPRIV_L(MV(E, P, Ve, C), A, HRO.ERO, G).main() @ &m : res] -
            Pr[G1L(E, Ve, C, A, HRO.ERO, S).main() @ &m : res]| +
          `|Pr[G1L(E, Ve, C, A, HRO.ERO, S).main() @ &m : res] - 
            Pr[DU_MB_BPRIV_R(MV(E, P, Ve, C), A, HRO.ERO, G, S, Recover').main() @ &m : res]| by smt(@Real). 
-by smt. 
+by smt.
 qed.
 
 end section DU_MB_BPRIV. 

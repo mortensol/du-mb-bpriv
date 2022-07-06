@@ -248,17 +248,17 @@ module SConsis3_R(V:VotingSystem, Ex:Extractor, C:ValidIndS, A:SConsis3_adv,
 
 section StrongConsistency.
 
-declare module H  <: HOracle.Oracle { BP }. 
-declare module G  <: GOracle.Oracle { BP, H, HRO.ERO }. 
-declare module Ev <: PKEvo.Scheme { BP, H, G, HRO.ERO }.  
-declare module C  <: ValidIndS { BP, H, G, Ev, HRO.ERO }. 
-declare module P  <: Prover { BP, H, G, Ev, C }. 
-declare module Ve <: Verifier { BP, H, G, Ev, C, P }.
-declare module CP <: CommitmentProtocol { BP, H, G, Ev, C, P, Ve, HRO.ERO }.
-declare module SS <: SignatureScheme {BP, H, G, Ev, C, P, Ve, HRO.ERO, CP}.
+declare module H  <: HOracle.Oracle { -BP }. 
+declare module G  <: GOracle.Oracle { -BP, -H, -HRO.ERO }. 
+declare module Ev <: PKEvo.Scheme { -BP, -H, -G, -HRO.ERO }.  
+declare module C  <: ValidIndS { -BP, -H, -G, -Ev, -HRO.ERO }. 
+declare module P  <: Prover { -BP, -H, -G, -Ev, -C }. 
+declare module Ve <: Verifier { -BP, -H, -G, -Ev, -C, -P }.
+declare module CP <: CommitmentProtocol { -BP, -H, -G, -Ev, -C, -P, -Ve, -HRO.ERO }.
+declare module SS <: SignatureScheme {-BP, -H, -G, -Ev, -C, -P, -Ve, -HRO.ERO, -CP}.
 
-declare module Asc2 <: SConsis2_adv { BP, H, G, Ev, C, P, Ve, CP, SS, HRO.ERO }. 
-declare module Asc3 <: SConsis3_adv { BP, H, G, Ev, C, P, Ve, CP,SS }.  
+declare module Asc2 <: SConsis2_adv { -BP, -H, -G, -Ev, -C, -P, -Ve, -CP, -SS, -HRO.ERO }. 
+declare module Asc3 <: SConsis3_adv { -BP, -H, -G, -Ev, -C, -P, -Ve, -CP, -SS }.  
 
 (* useful lemmas *)
 lemma duni_ap_weight (l : 'a list) : weight (duniform (allperms l)) = 1%r.  
@@ -306,11 +306,11 @@ declare axiom SS_s_ll : islossless SS.sign.
 declare axiom SS_g_ll : islossless SS.gen.
 
 (* SConis2 adversary *)
-declare axiom Asc2_ll (O <: SCons_Oracle {Asc2}) : 
+declare axiom Asc2_ll (O <: SCons_Oracle {-Asc2}) : 
   islossless H.o => islossless G.o => islossless Asc2(O).main. 
 
 (* SConsis3 adversary *)
-declare axiom Asc3_ll (O <: SCons_Oracle {Asc3}) : 
+declare axiom Asc3_ll (O <: SCons_Oracle {-Asc3}) : 
   islossless H.o => islossless G.o => islossless Asc3(O).main. 
 
 (* Concrete extractor taking a ballot (pc, c) and secret data BP.sk *)

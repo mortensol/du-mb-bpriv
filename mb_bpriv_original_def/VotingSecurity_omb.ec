@@ -176,15 +176,15 @@ module type OMB_BPRIV_adv(O:MB_BPRIV_oracles) = {
   proc a1(pk:pkey, 
           cu:(ident, secretcred) fmap, 
           pu:(ident, pubcred) fmap ) : (pubcred * ballot) list 
-                                       { O.vote O.board O.h O.g }
+                                       { O.vote, O.board, O.h, O.g }
                                        
   proc a2() : bool { }
 
-  proc a3() : unit { O.verify O.h O.g }
+  proc a3() : unit { O.verify, O.h, O.g }
   
   proc a4() : bool { }
 
-  proc a5 (r:result, pi:prf) : bool { O.board O.h O.g }
+  proc a5 (r:result, pi:prf) : bool { O.board, O.h, O.g }
                                       
 }.
 
